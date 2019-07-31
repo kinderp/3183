@@ -104,3 +104,10 @@ Below an image of the result.
 As you can see you have a row with the 3 fields `session`, `title`, `logo` that you have defined in your model
 
 ![header](https://github.com/kinderp/3183/blob/master/header.png)
+
+## Usage
+
+Controller classes has not been created yet, so data are hardcoded in main.py.
+If you run `python main.py` in the root dir project a pdf like below will be generated:
+
+
