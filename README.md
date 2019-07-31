@@ -105,7 +105,7 @@ As you can see you have a row with the 3 fields `session`, `title`, `logo` that 
 
 ## Usage
 
-Controller classes has not been created yet, so data are hardcoded in main.py.
+Controller classes have not been created yet, so data are hardcoded in main.py.
 If you run `python main.py` in the root dir project a pdf like below will be generated:
 
 
