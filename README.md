@@ -111,3 +111,58 @@ If you run `python main.py` in the root dir project a pdf like below will be gen
 
 ![header](https://github.com/kinderp/3183/blob/master/result.png)
 
+At this point you can start to play with 3183, let suppose you wanna modify Session data in your pdf in this way:
+
+* Delete Bullet3 in the first row
+* Put session_id field below session_title (2 columns intead of just one)
+* Add a location row
+* Put language below version
+* Add a enrolment row
+
+those ones are the only changes you need to do
+
+```python
+class SessionModel(Model):
+    session_type = TextField(text="Session Type: ")
+    s1 = BulletTextField(text='VILT')
+    s2 = BulletTextField(text='ILT')
+    #s3 = BulletTextField(text='Bullet 3')
+
+    session_title = TextField(text='Session Title: ')
+    session_id = TextField(text="Session Id: ")
+
+    location = TextField(text="Location (country, site)")
+
+    version = TextField(text="Version 1.0")
+    language = TextField(text="Language: English")
+
+    start_date = TextField("Start date: 01/01/2017")
+    end_date = TextField("End date: 01/01/2017")
+    duration = TextField("Duration: 1h20m")
+    enrolment = TextField("Enronlment: ")
+
+class SessionView(TableView):
+    model = SessionModel()
+    #fields = [
+    #          ['session_type', 's1', 's2', 's3'],
+    #          ['session_title', 'session_id'],
+    #          ['version', 'language'],
+    #          ['start_date', 'end_date', 'duration']
+    #]
+
+    fields = [
+              ['session_type', 's1', 's2'],
+              ['session_title'],
+              ['session_id'],
+              ['location'],
+              ['version'],
+              ['language'],
+              ['enrolment'],
+              ['start_date', 'end_date','duration']
+             ]
+
+```
+
+and thse the result
+
+
