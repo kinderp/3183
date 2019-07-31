@@ -3,7 +3,6 @@ mvc to pdf in a django style
 
 ```python
 > python
-Python 3.7.3 (default, Apr 09 2019, 05:18:21) [GCC] on linux
 Type "help", "copyright", "credits" or "license" for more information.
 >>> from operator import sub
 >>> 
@@ -12,9 +11,8 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> 
 >>> a = list(map(ord, mvc))
 >>> b = list(map(ord, pdf))
->>> c = list(map(sub, mvc, pdf))
+>> c = list(map(sub, a, b))
 >>>
->>> c = list(map(sub, a, b))
 >>> project_name = list(map(abs, c))
 >>> print(project_name)
 [3, 18, 3] 
@@ -25,18 +23,18 @@ Type "help", "copyright", "credits" or "license" for more information.
 3183 is a mvc2pdf tool, it can help you in creating and formatting your pdf report.
 Create your layout and form at canvas level is difficult so 3183 gives you a series
 of reusable predefined blocks (e.g. `TextField`, `ImageField`, `TableView` ecc) that 
-you can use in order to crate more quickly your pdf document. Moreever using a mvc
-approach: separating bussign logic to rendering should be traslated in more readable
-maintable and modifiable code.
+you can use in order to crate more quickly your pdf document. Moreover using a mvc
+approach: separating bussign logic from rendering should be traslated in a more readable
+maintanable and modifiable code.
 
 ## Basic concepts
 
 In a 3183 point of view a pdf document is a layered object.
 At the top level there is the`Template` . A template is a
 container of `View`s. Views deal with rendering of the `Model`s
-so the same model can have different layouts in other words the
+so the same model can have different layouts; in other words the
 same data (defined in the model) can be displayed in different
-ways using different views
+ways just using different views
 
 ## Model
 
@@ -71,7 +69,7 @@ class HeaderView(TableView):
 ```
 
 In this case i used a `TableView`, my data will be rendered
-in a table!
+as a table!
 
 Maybe you noticed 3 class attributes there:
 
@@ -112,3 +110,4 @@ If you run `python main.py` in the root dir project a pdf like below will be gen
 
 
 ![header](https://github.com/kinderp/3183/blob/master/result.png)
+
