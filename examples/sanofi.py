@@ -1,30 +1,21 @@
 import os, sys
 project_dir =  os.path.realpath(__file__).split("/examples")[0]
-test_dir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(project_dir)
 
-
+from reportlab.lib.pagesizes import A4
 from reportlab.platypus import SimpleDocTemplate
-from reportlab.platypus import Table, TableStyle
-from reportlab.platypus import Paragraph, Spacer
-from reportlab.platypus import Image
-
+from reportlab.platypus import Spacer
 from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib import colors
-
-from reportlab.platypus.flowables import Flowable
 
 styles = getSampleStyleSheet()
-
-from abc import ABC, abstractmethod
 
 from models import Model
 from views import TableView
 from fields import TextField, BulletTextField, ImageField
 
 
-
 class HeaderModel(Model):
+
     def __init__(self,**kwargs):
         """Init custom Model (Header)
 
@@ -46,11 +37,9 @@ class HeaderView(TableView):
 
         super(HeaderView, self).__init__(self)
 
-     def render(self):
-        return super().render()
-
 
 class SessionModel(Model):
+
     def __init__(self, **kwargs):
         """Init custom Model (Session)
 
@@ -86,6 +75,7 @@ class SessionModel(Model):
 
 
 class SessionView(TableView):
+
     def __init__(self, **kwargs):
 
         self.model = SessionModel(**kwargs)
@@ -100,11 +90,8 @@ class SessionView(TableView):
         super(SessionView, self).__init__(self)
 
 
-    def render(self):
-        return super().render()
-
-
 class StudentModel(Model):
+
     def __init__(self, **kwargs):
         """Init custom Model (Student)
 
@@ -144,6 +131,7 @@ class StudentModel(Model):
                                Date + Signature
                                """)
 
+
 class StudentView(TableView):
 
     def __init__(self, **kwargs):
@@ -160,6 +148,7 @@ class StudentView(TableView):
 
 
 class InstructorModel(Model):
+
     def __init__(self, **kwargs):
         """Init custom Model (Instructor)
 
@@ -179,8 +168,9 @@ class InstructorModel(Model):
         self.instructor_infos = TextField("""Instructor: {} <br/>
                                           Data + Siganture""".format(self._instructor_infos))
 
+
 class InstructorView(TableView):
-    
+
     def __init__(self, **kwargs):
         self.model = InstructorModel(**kwargs)
         self.span = True
@@ -192,9 +182,7 @@ class InstructorView(TableView):
 
         super(InstructorView, self).__init__(self)
 
-# class used in sing-in sheet example
-
-
+"""
 class SingInTemplate(SimpleDocTemplate):
     def __init__(self, *args, **kwargs):
         self.header = HeaderView()
@@ -202,9 +190,10 @@ class SingInTemplate(SimpleDocTemplate):
         self.info_students = None
         self.info_teacher = None
         return SimpleDocTemplate(*args, **kwargs)
-
+"""
 
 class Story():
+
     def __init__(self):
         self.workflow = []
 
@@ -217,7 +206,6 @@ class Story():
     def get(self):
         return self.workflow
 
-from reportlab.lib.pagesizes import A4
 
 def sanofi():
     doc = SimpleDocTemplate('test.pdf', pagasize=A4)
