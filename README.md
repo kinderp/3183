@@ -57,27 +57,29 @@ class HeaderModel(Model):
 So i want to insert 3 fields in my report: 2 `TextField` and 1 `ImageField`
 But i need some view to give my data a rendering layout.
 
-As you maybe noticed, `__init__` method uses `**kwargs` argument in its definition and
-passes that one to its `__init__` father method.
+### Instantiate a custom model
+
+As you maybe noticed above, `__init__` method uses `**kwargs` argument in its definition and
+passes that one to its `__init__` super method.
 
 ```python
-super(HeaderModel, self).__init__(**kwargs:
+super(HeaderModel, self).__init__(**kwargs):
 ```
 
-Doing that, all the keyworded function parameters in kwargs will be present as instance attributes
-in your custom model class.
+Doing that in the child's code, all the keyworded function parameters in kwargs will be present as instance attributes
+in your custom model class. You can use this method to pass values from a controller to your model instance.
 
-As you can see in the code above `self._session` `self._title` are not explicitly defined but came from
-kwargs dict. 
+As you can see in the code above `self._session` `self._title` are not explicitly defined but they are used after super
+and came from kwargs dict. 
 
-So here a correct way to instantiate your custom model class.
+So here a correct way to instantiate your custom model class in a controller.
 
 ```python
 data_header =  { '_title': 'Titolo centrale', '_session': 'Sessione di prova'}
 h = HeaderView(**data_header)
 ```
 
-
+It's a good idea documenting kwargs' contents in a docstring as above.
 
 What Model's __init__ method does is to update its `self.__dict__` with `kwargs`
 
