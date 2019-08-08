@@ -20,7 +20,7 @@ class HeaderModel(Model):
         """Init custom Model (Header)
 
         Parameters: 
-            kwargs : { '_title': 'Titola centrale', '_session': 'Sessione di prova'}
+            kwargs : { '_title': 'Titolo centrale', '_session': 'Sessione di prova'}
         """
         super(HeaderModel, self).__init__(**kwargs)
         self.session = TextField(text="{}".format(self._session))
@@ -213,7 +213,7 @@ def sanofi():
 
     some_space = Spacer(1,10)
 
-    data_header =  { '_title': 'Titola centrale', '_session': 'Sessione di prova'}
+    data_header =  { '_title': 'Titolo centrale', '_session': 'Sessione di prova'}
     h = HeaderView(**data_header)
 
     rendered_fields = h.render()
