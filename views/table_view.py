@@ -235,6 +235,4 @@ class TableView(View):
                     compliant_data[sr][sc] = getattr(self.model, elem).render()
 
         # and finally rendering fields
-        import pdb
-        pdb.set_trace()
         return Table(compliant_data, style=style_command)
