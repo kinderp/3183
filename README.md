@@ -58,11 +58,11 @@ But i need some view to give my data a rendering layout.
 
 ### Instantiate a custom model
 
-Before talking about views, let's see how to instantiate a custom model in a controller and in particular how to pass dynamic values needed to set Field types in the model.
+Before talking about views, let's see how to instantiate a custom model and in particular how to pass dynamic values needed to set Field types in the model.
 
-In your custom model you have to instantiate your fields e.g. `TextField` but values to be filled in are known only by the controller which will instantiate the model.
+In your custom model you have to instantiate your fields e.g. `TextField` but values to be filled in are known only by the controller which will instantiate the view and implicitly the model.
 
-Controllers and Models need a valid contract to exachange data.
+Controllers, Views and Models need a valid contract to exachange data.
 That's kwargs!
 
 As you maybe noticed above, `__init__` method uses `**kwargs` argument in its definition and
@@ -75,11 +75,11 @@ super(HeaderModel, self).__init__(**kwargs):
 Doing that in the child's code, all the keyworded function parameters in kwargs will be present as instance attributes
 in your custom model class. It's a good idea using a prefix underscore when naming your kwargs attributes (e.g. `_session`, `_title`) in order to do not override existing attributes.
 
-You can use this method to pass values from a controller to your model instance.
+You can use this method to pass values in this direction [Controller]->[View]->[Model].
 
 As you can see in the code above `self._session` `self._title` are not explicitly defined but they are used after super() call and came from kwargs dict. 
 
-So here a correct way to instantiate your custom model class in a controller.
+So here a correct way to pass dynamic values to view and its inner model from a controller.
 
 ```python
 data_header =  { '_title': 'Titolo centrale', '_session': 'Sessione di prova'}
@@ -131,6 +131,27 @@ Maybe you noticed 3 class attributes there:
 * `model`: a model instance you want to render
 * `fields`: fields of your model you want to show in the view
 * `span`: use span in rows if possible
+
+All these ones are required but another one does exist: `body_header`
+Read next section for a deep intro about View attributes
+
+### View attributes
+
+
+Field        | Required | Description
+------------ | ---------|-------------|
+`model`      | `True`   | ``
+`fields`     | `True`   |
+`span`       | `True`   |
+`body_header`| `False`  |
+
+#### View.model
+
+#### View.fields
+
+#### View.span
+
+#### View.body_header
 
 ## Template
 
