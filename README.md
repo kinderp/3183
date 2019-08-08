@@ -11,7 +11,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> 
 >>> a = list(map(ord, mvc))
 >>> b = list(map(ord, pdf))
->> c = list(map(sub, a, b))
+>>> c = list(map(sub, a, b))
 >>>
 >>> project_name = list(map(abs, c))
 >>> print(project_name)
@@ -42,14 +42,63 @@ A model can be definied like below:
 
 ```python
 class HeaderModel(Model):
-    session = TextField(text="prova")
-    title = TextField(text='titolo')
-    logo = ImageField('./sanofi.png', width=50, height=50)
+    def __init__(self,**kwargs):
+        """Init custom Model (Header)
 
+        Parameters: 
+            kwargs : { '_title': 'Titolo centrale', '_session': 'Sessione di prova'}
+        """
+        super(HeaderModel, self).__init__(**kwargs)
+        self.session = TextField(text="{}".format(self._session))
+        self.title = TextField(text="{}".format(self._title))
+        self.logo = ImageField('./sanofi.png', width=50, height=50)
 ```
 
-So i want to insert 3 fields in my view: 2 `TextField` and 1 `ImageField`
+So i want to insert 3 fields in my report: 2 `TextField` and 1 `ImageField`
 But i need some view to give my data a rendering layout.
+
+As you maybe noticed, `__init__` method uses `**kwargs` argument in its definition and
+passes that one to its `__init__` father method.
+
+```python
+super(HeaderModel, self).__init__(**kwargs:
+```
+
+Doing that, all the keyworded function parameters in kwargs will be present as instance attributes
+in your custom model class.
+
+As you can see in the code above `self._session` `self._title` are not explicitly defined but came from
+kwargs dict. 
+
+So here a correct way to instantiate your custom model class.
+
+```python
+data_header =  { '_title': 'Titolo centrale', '_session': 'Sessione di prova'}
+h = HeaderView(**data_header)
+```
+
+
+
+What Model's __init__ method does is to update its `self.__dict__` with `kwargs`
+
+```
+from abc import ABC
+
+class Model(ABC):
+    """
+    Defined here interface for model types 
+    """
+    def __init__(self, **kwargs):
+        """
+        Init generic model
+
+        Parameters:
+            kwargs: it's a dict that will contain data model from controller obj
+        """
+        self.__dict__.update(kwargs)
+```
+
+
 
 ## View
 
@@ -57,15 +106,12 @@ A view for a model can be defined like below
 
 ```python
 class HeaderView(TableView):
-     model = HeaderModel()
-     fields = [['session', 'title', 'logo']]
-     span = False
+     def __init__(self, **kwargs):
+        self.model = HeaderModel(**kwargs)
+        self.fields = [['session', 'title', 'logo']]
+        self.span = False
 
-     def __init__(self):
         super(HeaderView, self).__init__(self)
-
-     def render(self):
-        return super().render()
 ```
 
 In this case i used a `TableView`, my data will be rendered
