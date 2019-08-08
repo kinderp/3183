@@ -60,7 +60,7 @@ But i need some view to give my data a rendering layout.
 
 Before talking about views, let's see how to instantiate a custom model in a controller and in particular how to pass dynamic values needed to set Field types in the model.
 
-In your custom model you have to instantiate your fields e.g. `TextField` but values to be filled in are known only by the controller which will instatitate the model.
+In your custom model you have to instantiate your fields e.g. `TextField` but values to be filled in are known only by the controller which will instantiate the model.
 
 Controllers and Models need a valid contract to exachange data.
 That's kwargs!
@@ -73,7 +73,9 @@ super(HeaderModel, self).__init__(**kwargs):
 ```
 
 Doing that in the child's code, all the keyworded function parameters in kwargs will be present as instance attributes
-in your custom model class. You can use this method to pass values from a controller to your model instance.
+in your custom model class. It's a good idea using a prefix underscore when naming your kwargs attributes (e.g. `_session`, `_title`) in order to do not override existing attributes.
+
+You can use this method to pass values from a controller to your model instance.
 
 As you can see in the code above `self._session` `self._title` are not explicitly defined but they are used after super() call and came from kwargs dict. 
 
