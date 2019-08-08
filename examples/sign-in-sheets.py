@@ -7,11 +7,13 @@ from models import Model
 from views import TableView
 from fields import TextField, BulletTextField, ImageField
 
+from reportlab.lib.pagesizes import A4
 from reportlab.platypus import SimpleDocTemplate, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 styles = getSampleStyleSheet() 
 
 class HeaderModel(Model):
+
     def __init__(self,**kwargs):
         """Init custom Model (Header)
 
@@ -68,6 +70,7 @@ class SessionModel(Model):
 
 
 class SessionView(TableView):
+
     def __init__(self, **kwargs):
 
         self.model = SessionModel(**kwargs)
@@ -85,7 +88,8 @@ class SessionView(TableView):
         super(SessionView, self).__init__(self)
 
 class InstructorModel(Model):
-     def __init__(self, **kwargs):
+
+    def __init__(self, **kwargs):
         """Init custom Model (Instructor)
 
         Parameters:
@@ -106,7 +110,9 @@ class InstructorModel(Model):
         self.part2 = TextField("Part 2")
         self.affiliation = TextField("AFFILIATION")
 
+
 class InstructorView(TableView):
+
     def __init__(self, **kwargs):
 
         self.model = InstructorModel(**kwargs)
@@ -125,7 +131,8 @@ class InstructorView(TableView):
 
 
 class SingInTemplate(SimpleDocTemplate):
-    def __init__(self, *args, **kwargs):
+
+   def __init__(self, *args, **kwargs):
         self.header = HeaderView()
         self.info_session = None
         self.info_students = None
@@ -134,6 +141,7 @@ class SingInTemplate(SimpleDocTemplate):
 
 
 class Story():
+
     def __init__(self):
         self.workflow = []
 
@@ -146,7 +154,6 @@ class Story():
     def get(self):
         return self.workflow
 
-from reportlab.lib.pagesizes import A4
 
 def sign_in_sheets():
     doc = SimpleDocTemplate('test.pdf', pagasize=A4)
@@ -191,8 +198,8 @@ def sign_in_sheets():
 
     s = SessionView(**data_session)
 
-    session_data = [
-    ]
+    session_data = []
+
     for elem in cell_values:
        session_data.append([cell_formatted_text.format(**elem), '', '', ''])
 
@@ -201,9 +208,7 @@ def sign_in_sheets():
 
     story.add(some_space)
 
-    instructor_data = [
-    ]
-
+    instructor_data = []
 
     cell_formatted_text = """
                 {family_name}<br/>
@@ -224,10 +229,8 @@ def sign_in_sheets():
     for elem in cell_values:
        instructor_data.append([cell_formatted_text.format(**elem), '', '', ''])
 
-
     i = InstructorView()
     rendered_fields = i.render(instructor_data)
-
 
     story.add(rendered_fields)
 
