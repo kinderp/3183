@@ -11,7 +11,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> 
 >>> a = list(map(ord, mvc))
 >>> b = list(map(ord, pdf))
->> c = list(map(sub, a, b))
+>>> c = list(map(sub, a, b))
 >>>
 >>> project_name = list(map(abs, c))
 >>> print(project_name)
@@ -42,14 +42,72 @@ A model can be definied like below:
 
 ```python
 class HeaderModel(Model):
-    session = TextField(text="prova")
-    title = TextField(text='titolo')
-    logo = ImageField('./sanofi.png', width=50, height=50)
-
+    def __init__(self,**kwargs):
+        """Init custom Model (Header)
+        Parameters: 
+            kwargs : { '_title': 'Titolo centrale', '_session': 'Sessione di prova'}
+        """
+        super(HeaderModel, self).__init__(**kwargs)
+        self.session = TextField(text="{}".format(self._session))
+        self.title = TextField(text="{}".format(self._title))
+        self.logo = ImageField('./sanofi.png', width=50, height=50)
 ```
 
-So i want to insert 3 fields in my view: 2 `TextField` and 1 `ImageField`
+So i want to insert 3 fields in my report: 2 `TextField` and 1 `ImageField`
 But i need some view to give my data a rendering layout.
+
+### Instantiate a custom model
+
+Before talking about views, let's see how to instantiate a custom model and in particular how to pass dynamic values needed to set Field types in the model.
+
+In your custom model you have to instantiate your fields e.g. `TextField` but values to be filled in are known only by the controller which will instantiate the view and implicitly the model.
+
+Controllers, Views and Models need a valid contract to exachange data.
+That's kwargs!
+
+As you maybe noticed above, `__init__` method uses `**kwargs` argument in its definition and
+passes that one to its `__init__` super method.
+
+```python
+super(HeaderModel, self).__init__(**kwargs):
+```
+
+Doing that in the child's code, all the keyworded function parameters in kwargs will be present as instance attributes
+in your custom model class. It's a good idea using a prefix underscore when naming your kwargs attributes (e.g. `_session`, `_title`) in order to do not override existing attributes.
+
+You can use this method to pass values in this direction [Controller]->[View]->[Model].
+
+As you can see in the code above `self._session` `self._title` are not explicitly defined but they are used after super() call and came from kwargs dict. 
+
+So here a correct way to pass dynamic values to view and its inner model from a controller.
+
+```python
+data_header =  { '_title': 'Titolo centrale', '_session': 'Sessione di prova'}
+h = HeaderView(**data_header)
+```
+
+It's a good idea documenting kwargs' contents in a docstring.
+
+What Model's __init__ method does is to update its `self.__dict__` with `kwargs`
+
+```python
+from abc import ABC
+
+class Model(ABC):
+    """
+    Defined here interface for model types 
+    """
+    def __init__(self, **kwargs):
+        """
+        Init generic model
+
+        Parameters:
+            kwargs: it's a dict that will contain data model from controller obj
+        """
+        self.__dict__.update(kwargs)
+```
+
+
 
 ## View
 
@@ -57,15 +115,12 @@ A view for a model can be defined like below
 
 ```python
 class HeaderView(TableView):
-     model = HeaderModel()
-     fields = [['session', 'title', 'logo']]
-     span = False
+     def __init__(self, **kwargs):
+        self.model = HeaderModel(**kwargs)
+        self.fields = [['session', 'title', 'logo']]
+        self.span = False
 
-     def __init__(self):
         super(HeaderView, self).__init__(self)
-
-     def render(self):
-        return super().render()
 ```
 
 In this case i used a `TableView`, my data will be rendered
@@ -76,6 +131,27 @@ Maybe you noticed 3 class attributes there:
 * `model`: a model instance you want to render
 * `fields`: fields of your model you want to show in the view
 * `span`: use span in rows if possible
+
+All these ones are required but another one does exist: `body_header`
+Read next section for a deep intro about View attributes
+
+### View attributes
+
+
+Field        | Required | Description
+------------ | ---------|-------------|
+`model`      | `True`   | ``
+`fields`     | `True`   |
+`span`       | `True`   |
+`body_header`| `False`  |
+
+#### View.model
+
+#### View.fields
+
+#### View.span
+
+#### View.body_header
 
 ## Template
 
