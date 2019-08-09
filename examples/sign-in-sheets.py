@@ -4,7 +4,7 @@ test_dir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(project_dir)
 
 from models import Model
-from views import TableView
+from views import TableView, FormView
 from fields import TextField, BulletTextField, ImageField
 
 from reportlab.lib.pagesizes import A4
@@ -34,6 +34,63 @@ class HeaderView(TableView):
         self.span = False
 
         super(HeaderView, self).__init__(self)
+
+
+class SummaryModel(Model):
+
+    def __init__(self, **kwargs):
+        """Init custom Model (Summary)
+
+        Parameters:
+            kwargs : {
+                        "_event_name": "Nome evento",
+                        "_session_id": "1234abc",
+                        "_vendor": "ACME Labs",
+                        "_start_date": "01/01/2017",
+                        "_end_date": "01/01/2017",
+                        "_parts": "1"
+
+            }
+
+        """
+        super(SummaryModel, self).__init__(**kwargs)
+        self.event_name_and_session_id = TextField("{} - {}".format(self._event_name, self._session_id))
+        self.vendor = TextField("{}".format(self._vendor))
+        self.start_and_end_date_parts = TextField("From {} to {} (Parts: {})".format(self._start_date,
+                                                                                     self._end_date,
+                                                                                     self._parts))
+from reportlab.lib.enums import TA_CENTER
+
+
+class SummaryView(FormView):
+    def __init__(self, **kwargs):
+        self.model = SummaryModel(**kwargs)
+        self.fields = [
+                        ['event_name_and_session_id'],
+                        ['vendor']
+        ]
+
+        self.styles = {
+            'event_name_and_session_id': {
+                'style': 'Normal',
+                'space': 4.5,
+                'commands': [
+                                ('alignment', TA_CENTER),
+                                ('fontName', 'Helvetica'),
+                                ('fontSize', 18),
+                            ]
+            },
+            'vendor': {
+                'style': 'Normal',
+                'commands': [
+                                ('alignment', TA_CENTER),
+                                ('fontSize', 12)
+                            ]
+            }
+        }
+
+
+        super(SummaryView, self).__init__(self)
 
 
 class SessionModel(Model):
@@ -86,6 +143,7 @@ class SessionView(TableView):
         self.span = True
 
         super(SessionView, self).__init__(self)
+
 
 class InstructorModel(Model):
 
@@ -165,6 +223,21 @@ def sign_in_sheets():
     h = HeaderView(**data_header)
 
     rendered_fields = h.render()
+    story.add(rendered_fields)
+
+    story.add(some_space)
+
+    data_summary = {
+                        "_event_name": "Nome evento",
+                        "_session_id": "1234abc",
+                        "_vendor": "ACME Labs",
+                        "_start_date": "01/01/2017",
+                        "_end_date": "01/01/2017",
+                        "_parts": "1"
+    }
+
+    s_ = SummaryView(**data_summary)
+    rendered_fields = s_.render()
     story.add(rendered_fields)
 
     story.add(some_space)
