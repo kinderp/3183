@@ -227,7 +227,16 @@ class SummaryView(FormView):
         super(SummaryView, self).__init__(self)
 
 ```
+```python
+   data_summary = {
+                        "_event_name": "Nome evento",
+                        "_session_id": "1234abc",
+                        "_vendor": "ACME Labs"
+    }
 
+    s_ = SummaryView(**data_summary)
+    rendered_fields = s_.render()
+```
 
 ## Template
 
