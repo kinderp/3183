@@ -155,17 +155,17 @@ Field        | Required | Description
 
 ### FormView
 
-FOrmView is like a web form, it renders your data in rows one item at time.
+FormView is like a web form, it renders your data in rows one item at time.
 If you don't need any complicated layout (otherwise you should take a look at
 `TableView`) and you just want to write some rows of text applying some style
-`FormView` can help you.
+maybe `FormView` could help you.
 
 Below a code example on how to use a `FormView.
 
-Even in this view we have: `self.model`, `self.fields` attribute.
+Even in this case we have: `self.model`, `self.fields` attributes.
 Those ones have the same meaning and behaviour as usal (as explained
 in previous sections) but you should take attention to `self.style`;
-it defines text style for your text rows.
+it defines rendering style for your text rows.
 
 ```python
 
