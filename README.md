@@ -135,7 +135,7 @@ Maybe you noticed 3 class attributes there:
 All these ones are required but another one does exist: `body_header`
 Read next section for a deep intro about View attributes
 
-### View attributes
+### TableView
 
 
 Field        | Required | Description
@@ -152,6 +152,91 @@ Field        | Required | Description
 #### View.span
 
 #### View.body_header
+
+### FormView
+
+FormView is like a web form, it renders your data in rows one item at time.
+If you don't need any complicated layout (otherwise you should take a look at
+`TableView`) and you just want to write some rows of text applying some style
+maybe `FormView` could help you.
+
+Below a code example on how to use a `FormView.
+
+Even in this case we have: `self.model`, `self.fields` attributes.
+Those ones have the same meaning and behaviour as usal (as explained
+in previous sections) but you should take attention to `self.style`;
+it defines rendering style for your text rows.
+
+```python
+
+class SummaryModel(Model):
+
+    def __init__(self, **kwargs):
+        """Init custom Model (Summary)
+
+        Parameters:
+            kwargs : {
+                        "_event_name": "Nome evento",
+                        "_session_id": "1234abc",
+                        "_vendor": "ACME Labs",
+                        "_start_date": "01/01/2017",
+                        "_end_date": "01/01/2017",
+                        "_parts": "1"
+
+            }
+
+        """
+        super(SummaryModel, self).__init__(**kwargs)
+        self.event_name_and_session_id = TextField("{} - {}".format(self._event_name,
+                                                                    self._session_id))
+        self.vendor = TextField("{}".format(self._vendor))
+        self.start_and_end_date_parts = TextField("From {} to {} (Parts: {})".format(self._start_date,
+                                                                                     self._end_date,
+                                                                                     self._parts))
+from reportlab.lib.enums import TA_CENTER
+
+
+class SummaryView(FormView):
+    def __init__(self, **kwargs):
+        self.model = SummaryModel(**kwargs)
+        self.fields = [
+                        ['event_name_and_session_id'],
+                        ['vendor']
+        ]
+
+        self.styles = {
+            'event_name_and_session_id': {
+                'style': 'Normal',
+                'space': 4.5,
+                'commands': [
+                                ('alignment', TA_CENTER),
+                                ('fontName', 'Helvetica'),
+                                ('fontSize', 18),
+                            ]
+            },
+            'vendor': {
+                'style': 'Normal',
+                'commands': [
+                                ('alignment', TA_CENTER),
+                                ('fontSize', 12)
+                            ]
+            }
+        }
+
+
+        super(SummaryView, self).__init__(self)
+
+```
+```python
+   data_summary = {
+                        "_event_name": "Nome evento",
+                        "_session_id": "1234abc",
+                        "_vendor": "ACME Labs"
+    }
+
+    s_ = SummaryView(**data_summary)
+    rendered_fields = s_.render()
+```
 
 ## Template
 
