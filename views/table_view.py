@@ -4,7 +4,7 @@ from reportlab.platypus import Table, TableStyle
 from reportlab.lib import colors
 
 from utils import FieldFactory
-
+from styles import Styles
 from .view import View
 
 class TableView(View):
@@ -16,6 +16,9 @@ class TableView(View):
         self.fields = child.fields
         self.span = child.span
         self.body_header = child.body_header if hasattr(child, 'body_header') else None 
+        # atm style is only for header fields styiling (Textfield in a cell)
+        # IS NOT table style (border backgroudn and so on)!
+        self.style_header = child.style_header if hasattr(child, 'style_header') else []
         # style is static yet
         # TO DO: load style dynamically somewhere
         self.LIST_STYLE_HEADER = TableStyle(
@@ -89,7 +92,7 @@ class TableView(View):
             for i, field in enumerate(body_fields):
                 current_record = row[i]
                 class_name = getattr(self.model, field).__class__.__name__
-                print(class_name)
+                #print(class_name)
                 if isinstance(current_record, dict):
                     new_body_obj = FieldFactory.create(class_name, current_record)
                     new_rendered_row.append(new_body_obj.render())
@@ -110,7 +113,20 @@ class TableView(View):
                 if elem and isinstance(elem, str):
                     # if elem in a row is a str, it is a simple elem like:
                     # TextField, ImageField ecc.
-                    new_row.append(getattr(self.model, elem).render())
+                    class_name = getattr(self.model, elem).__class__.__name__
+                    if elem in self.style_header and class_name == 'TextField':
+                        # atm header style con be applied only to TextField
+                        # type. ( and class_name == 'TextField )
+
+                        style_name = self.style_header[elem]['style']
+                        commands = self.style_header[elem]['commands']
+                        my_style = Styles.style(style=style_name,
+                                                commands=commands)
+
+                        new_row.append(getattr(self.model,
+                                               elem).render(style=my_style))
+                    else:
+                        new_row.append(getattr(self.model, elem).render())
                 elif elem and isinstance(elem, list):
                     # if elem is a list it is an inner table.
                     #
@@ -232,7 +248,18 @@ class TableView(View):
                 if (sc, sr) not in min_list:
                     compliant_data[sr][sc] = ''
                 else:
-                    compliant_data[sr][sc] = getattr(self.model, elem).render()
+                    class_name = getattr(self.model, elem).__class__.__name__
+                    if elem in self.style_header and class_name == 'TextField':
+                        # atm header style con be applied only to TextField
+                        # type. ( and class_name == 'TextField )
+                        style_name = self.style_header[elem]['style']
+                        commands = self.style_header[elem]['commands']
+                        my_style = Styles.style(style=style_name,
+                                                commands=commands)
+
+                        compliant_data[sr][sc] = getattr(self.model, elem).render(style=my_style)
+                    else:
+                        compliant_data[sr][sc] = getattr(self.model, elem).render()
 
         # and finally rendering fields
         return Table(compliant_data, style=style_command)

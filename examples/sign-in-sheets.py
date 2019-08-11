@@ -31,7 +31,16 @@ class HeaderView(TableView):
         self.model = HeaderModel(**kwargs)
         self.fields = [['logo_vendor', 'sign_in_sheet', 'logo_company']]
         self.span = False
-
+        self.style_header = {
+            "sign_in_sheet": {
+                "style": "Normal",
+                "commands": [
+                                ('alignment', TA_CENTER),
+                                ('fontName', 'Helvetica'),
+                                ('fontSize', 18),
+                ]
+            }
+        }
         super(HeaderView, self).__init__(self)
 
 
@@ -147,13 +156,13 @@ class SessionModel(Model):
         """
         self.session = TextField(text_for_session.format(**self._session))
 
-        self.participants = TextField("Participants")
-        self.signatures = TextField("SIGNATURES")
+        self.participants = TextField("<b>Participants</b>")
+        self.signatures = TextField("<b>SIGNATURES</b>")
 
-        self.part1 = TextField("Part 1")
-        self.part2 = TextField("Part 2")
+        self.part1 = TextField("<i>Part 1</i>")
+        self.part2 = TextField("<i>Part 2</i>")
 
-        self.observations = TextField("Observations")
+        self.observations = TextField("<i>Observations</i>")
 
 
 class SessionView(TableView):
@@ -171,7 +180,43 @@ class SessionView(TableView):
               ],
         ]
         self.span = True
+        self.style_header = {
+            "participants": {
+                "style": "Normal",
+                "commands": [
+                                ('alignment', TA_CENTER),
+                                ('fontSize', 12),
+                ]
+            },
+            "signatures": {
+                "style": "Normal",
+                "commands": [
+                                ('alignment', TA_CENTER),
+                                ('fontSize', 12),
+                ]
+            },
+            "part1": {
+                "style": "Normal",
+                "commands": [
+                                ('alignment', TA_CENTER),
+                                ('fontSize', 12),
+                ]
+            },
+            "part2": {
+                "style": "Normal",
+                "commands": [
+                                ('alignment', TA_CENTER),
+                                ('fontSize', 12),
+                ]
+            },
 
+            "observations": {
+                "style": "Normal",
+                "commands": [
+                                ('alignment', TA_CENTER),
+                ]
+            },
+        }
         super(SessionView, self).__init__(self)
 
 
@@ -192,11 +237,11 @@ class InstructorModel(Model):
                      }
         """
         super(InstructorModel, self).__init__(**kwargs)
-        self.instructors = TextField("INSTRUCTOR(s)")
-        self.signatures = TextField("SIGNATURES")
-        self.part1 = TextField("Part 1")
-        self.part2 = TextField("Part 2")
-        self.affiliation = TextField("AFFILIATION")
+        self.instructors = TextField("<b>INSTRUCTOR(s)</b>")
+        self.signatures = TextField("<b>SIGNATURES</b>")
+        self.part1 = TextField("<i>Part 1</i>")
+        self.part2 = TextField("<i>Part 2</i>")
+        self.affiliation = TextField("<i>AFFILIATION</i>")
 
 
 class InstructorView(TableView):
@@ -213,6 +258,42 @@ class InstructorView(TableView):
             ]
         ]
         self.span = True
+        self.style_header = {
+                            "instructors": {
+                                            "style": "Normal",
+                                            "commands": [
+                                                        ('alignment', TA_CENTER),
+                                                        ('fontName', 'Helvetica'),
+                                                        ('fontSize', 8),
+                                                        ]
+                            },
+                            "signatures": {
+                                            "style": "Normal",
+                                            "commands": [
+                                                        ('alignment', TA_CENTER),
+                                                        ('fontName', 'Helvetica'),
+                                                        ('fontSize', 14),
+                                                        ]
+                            },
+                            "part1": {
+                                            "style": "Normal",
+                                            "commands": [
+                                                        ('alignment', TA_CENTER),
+                                                        ('fontName', 'Helvetica'),
+                                                        ('fontSize', 4),
+                                                        ]
+                            },
+                            "part2": {
+                                            "style": "Normal",
+                                            "commands": [
+                                                        ('alignment', TA_CENTER),
+                                                        ('fontName', 'Helvetica'),
+                                                        ('fontSize', 4),
+                                                        ]
+                            },
+
+        }
+
         self.body_header = ['instructors', 'affiliation', 'part1', 'part2']
 
         super(InstructorView, self).__init__(self)
@@ -419,7 +500,7 @@ def make():
                      }
 
     cell_formatted_text = """
-                {family_name}<br/>
+                <b>{family_name}</b><br/>
                 {first_name}<br/>
                 {username}<br/>
                 {email}<br/>
@@ -450,7 +531,7 @@ def make():
     instructor_data = []
 
     cell_formatted_text = """
-                {family_name}<br/>
+                <b>{family_name}</b><br/>
                 {first_name}<br/>
                 {username}<br/>
                 {email}<br/>
@@ -466,7 +547,8 @@ def make():
     ]
 
     for elem in cell_values:
-       instructor_data.append([cell_formatted_text.format(**elem), '', '', ''])
+       instructor_data.append([cell_formatted_text.format(**elem),
+                               'AFFILIATION<br/> <br/ <br/> <br/> <br/> <br/> <br/>', '', ''])
 
     i = InstructorView()
     rendered_fields = i.render(instructor_data)
