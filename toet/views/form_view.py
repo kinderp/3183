@@ -1,5 +1,5 @@
 from .view import View
-from styles import Styles
+from ..styles import Styles
 from reportlab.platypus import Spacer
 
 class FormView(View):
