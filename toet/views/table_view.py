@@ -3,8 +3,8 @@ import copy
 from reportlab.platypus import Table, TableStyle
 from reportlab.lib import colors
 
-from utils import FieldFactory
-from styles import Styles
+from ..utils import FieldFactory
+from ..styles import Styles
 from .view import View
 
 class TableView(View):
