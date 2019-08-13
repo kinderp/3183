@@ -1,4 +1,4 @@
-from fields import TextField, BulletTextField, ImageField
+from ..fields import TextField, BulletTextField, ImageField
 
 class FieldFactory():
 
