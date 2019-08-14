@@ -31,7 +31,6 @@ class Styles:
             elif isinstance(value, float):
                 template_statement = 'selected_style.{}=float(str({}))'.format(attribute, value)
 
-            print(template_statement)
             exec(template_statement)
 
         return selected_style

@@ -7,6 +7,15 @@ from ..utils import FieldFactory
 from ..styles import Styles
 from .view import View
 
+from reportlab.lib.pagesizes import A4
+
+from ..settings import PAGASIZE
+from ..settings import DOC_WIDTH, DOC_HEIGHT
+from ..settings import DOC_TOP_MARGIN, DOC_BOTTOM_MARGIN
+from ..settings import DOC_RIGHT_MARGIN, DOC_LEFT_MARGIN
+from ..settings import DOC_WIDTH_REAL, DOC_HEIGHT_REAL
+
+
 class TableView(View):
 
     def __init__(self, child):
@@ -40,6 +49,10 @@ class TableView(View):
             )
 
         super(TableView, self).__init__(self.child)
+
+    def _get_col_widths(self,  data):
+        n_cols = len(data)
+        return [DOC_WIDTH_REAL/n_cols]*n_cols
 
     def _view_rule(self):
         # TODO: Put here all the logic for rendering rules
@@ -101,7 +114,10 @@ class TableView(View):
                     new_rendered_row.append(new_body_obj.render())
             body_rendered_objects.append(new_rendered_row)
 
-        header.append(Table(body_rendered_objects, style=self.LIST_STYLE))
+        col_widths = self._get_col_widths(body_rendered_objects[0])
+        #header.append(Table(body_rendered_objects, style=self.LIST_STYLE))
+        header.append(Table(body_rendered_objects, style=self.LIST_STYLE,
+                            colWidths=col_widths))
         return header
 
     def render_header(self):
@@ -165,7 +181,10 @@ class TableView(View):
             if self.span and not inner:
                 # this row is not an inner table
                 # objects contais all the rendered elems of the row
-                t = Table([new_row], style=self.LIST_STYLE_HEADER)
+                #t = Table([new_row], style=self.LIST_STYLE_HEADER)
+                col_widths = self._get_col_widths(new_row)
+                t = Table([new_row], style=self.LIST_STYLE_HEADER,
+                          colWidths=col_widths)
                 objects.append(t)
             elif self.span and inner:
                 # nothing to do here, inner talbe has been added above
@@ -177,7 +196,9 @@ class TableView(View):
                 objects.append(new_row)
 
         if not self.span:
-            objects = [Table(objects, style=self.LIST_STYLE_HEADER)]
+            col_widths = self._get_col_widths(objects[0])
+            objects = [Table(objects, style=self.LIST_STYLE_HEADER, colWidths=col_widths)] 
+            #objects = [Table(objects, style=self.LIST_STYLE_HEADER)] 
         return objects
 
     def _render_inner_table(self, data):
@@ -262,4 +283,45 @@ class TableView(View):
                         compliant_data[sr][sc] = getattr(self.model, elem).render()
 
         # and finally rendering fields
-        return Table(compliant_data, style=style_command)
+        col_widths = self._get_col_widths(compliant_data[0])
+        #return Table(compliant_data, style=style_command)
+        return Table(compliant_data, colWidths=col_widths, style=style_command)
+
+
+class TableViewHeaderOrFooter(View):
+    def __init__(self, child):
+
+        self.child = child
+        self.model = child.model
+        self.fields = child.fields
+        # IS NOT table style (border backgroudn and so on)!
+        self.style_header = child.style_header if hasattr(child, 'style_header') else []
+        # style is static yet
+        # TO DO: load style dynamically somewhere
+        self.STYLE = TableStyle(
+            [
+            ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+            ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
+            ('ALIGN', (0,0), (-1,-1), 'CENTER'),
+            ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+            ]
+            )
+        super(TableViewHeaderOrFooter, self).__init__(self.child)
+
+    def render(self):
+        rendered_fields = []
+        for elem in self.fields:
+            class_name = getattr(self.model, elem).__class__.__name__
+            if elem in self.style_header and class_name == 'TextField':
+                # atm header style con be applied only to TextField
+                # type. ( and class_name == 'TextField )
+
+                style_name = self.style_header[elem]['style']
+                commands = self.style_header[elem]['commands']
+                my_style = Styles.style(style=style_name, commands=commands)
+
+                rendered_fields.append(getattr(self.model, elem).render(style=my_style))
+            else:
+                rendered_fields.append(getattr(self.model, elem).render())
+
+        return [Table([rendered_fields], style=self.STYLE)]
