@@ -1,4 +1,69 @@
 class CellFormatFactory(object):
+    """Format triple quote text str in a TableView cell
+
+    Sometimes using format str method with keywords (or **kwargs)
+    cab be problematic because some keys, coming from your data
+    source, are missing.
+
+    CellFormatFactory modifies your text deleting row with missing keys.
+    To be more clear:
+    It gets a text like below:
+
+        '''
+            <b>{family_name}</b><br/>
+            <b>{first_name}</b><br/>
+            <i>{username}</i><br/>
+            {email}<br/>
+            <b>Division:</> {division}<br/>
+        '''
+
+    and  a formatting dict:
+
+        {
+            "family_name": "Rossi",
+            "first_name": "",
+            "username": "Mario",
+            "email": " ",
+            "division": None,
+        }
+
+    And delete a text row if the corresponding key in
+    formatting dict is equal to:
+
+        1. None
+        2. ""
+        3. " "
+
+    (e.g.)
+
+    this code:
+
+        from toet.utils import CellFormatFactory
+        rawtext = '''
+                    <b>{family_name}</b><br/>
+                    <b>{first_name}</b><br/>
+                    <i>{username}</i><br/>
+                    {email}<br/>
+                    <b>Division:</> {division}<br/>
+                  '''
+
+        formatting = {
+                        "family_name": "Rossi",
+                        "first_name": "",
+                        "username": "Mario",
+                        "email": " ",
+                        "division": None,
+        }
+
+        cell = CellFormatFactory(rawtext, formatting)
+        print("{:cell}".format(cell))
+
+    produces this output:
+
+        <b>Rossi</b><br/>
+        <i>Mario</i><br/>
+
+    """
     def __init__(self, rawtext, formatting, delimeter='\n'):
         self.formatting = formatting
         self.rawtext = rawtext
