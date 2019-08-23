@@ -340,7 +340,7 @@ Translator.bulk_generate_vocabularies(TRANSLATION_DIR, INDEX, src_dest=list_lang
 ```
 
 All is in `bulk_generate_vocabularies`, it will get and translate `__t` in every class 
-defined in `INDEX` (`CustomModelClas1`, `CustomModelClas1`, `CustomModelClas1`) if `__t`
+defined in `INDEX` (`CustomModelClas1`, `CustomModelClas2`, `CustomModelClas3`) if `__t`
 is not defined in these classes nothing will happen, so take attention. Keys in `INDEX` are
 absolute paths  (without .py at the end) of modules containing those classes.
 `TRANSLATION_DIR` is absolute path of the dir where toet will save your vocabularies.
