@@ -263,7 +263,7 @@ and use those ones during rendering phase to speed up the whole process.
 
 Batch mode depends on vocaularies files. Let's see how to create those ones for
 your custom model classes.
-Every 3183 custom modol class can define a magic class attribute `__t`. It is just
+Every 3183 custom model class can define a magic class attribute `__t`. It is just
 a dict like below:
 
 ```python
@@ -278,13 +278,13 @@ __t = {
 
 
 Every keys in `__t` will be automatically translated when `_()` model magic function
-will be called. See below an example for a custom model class named SummaryModel:
+will be called. See below how to invoke `_()`in a custom model class named SummaryModel:
 
 ```python
 super(SummaryModel, self)._('SummaryModel', SummaryModel.__t)
 ```
 
-`_()` is defined in base Model class (infact it is called using `super`)
+`_()` is defined in base `Model` class (infact it is called using `super`)
 Below its implementation:
 
 ```python
@@ -308,7 +308,7 @@ Below its implementation:
             self.__dict__.update({'_t': translated__t})
 ```
 
-As you can see `_()` use four env vars:
+As you can see `_()` uses four env vars:
 
 * TOET_TRANSLATIONS_DIR
 * TOET_SRC_LANG
@@ -322,7 +322,8 @@ TOET_SRC_LANG          | source translation lang      | `str` (e.g. `en`)
 TOET_DEST_LANG         | destination translation lang | `str` (e.g. `it`)
 TOET_LOAD_VOCABULARIES | load translations from disk  | `int` (e.g. `1` or `0`)
 
-See [here](https://github.com/kinderp/3183/blob/master/examples/vocabularies_generator.py) or below for a full code example of a vocabularies generator
+See [here](https://github.com/kinderp/3183/blob/master/examples/vocabularies_generator.py) for a working
+code example or below for a teorical one of a vocabularies generator
 
 ```python
 from toet.utils import Translator
@@ -339,12 +340,45 @@ Translator.bulk_generate_vocabularies(TRANSLATION_DIR, INDEX, src_dest=list_lang
 ```
 
 All is in `bulk_generate_vocabularies`, it will get and translate `__t` in every class 
-defined in `INDEX` (`CustomModelClas1`, `CustomModelClas1`, `CustomModelClas1`); key is
-absolute path  (without .py at the end) of module containing those classes.
+defined in `INDEX` (`CustomModelClas1`, `CustomModelClas1`, `CustomModelClas1`) if `__t`
+is not defined in these classes nothing will happen, so take attention. Keys in `INDEX` are
+absolute paths  (without .py at the end) of modules containing those classes.
 `TRANSLATION_DIR` is absolute path of the dir where toet will save your vocabularies.
-So remember to set `TOET_LOAD_VOCABULARIES` to the same value of `TRANSLATION_DIR`to permit
-toet to load correctly your vocabularies.
+So remember to set `TOET_LOAD_VOCABULARIES` to the same value of `TRANSLATION_DIR`to load 
+correctly your vocabularies.
 
+After runnning a vocabularies generator your translations file will be saved in `TRANSLATION_DIR`
+and you can set the 4 vars and call you render function
+
+```python
+        os.environ['TOET_LOAD_VOCABULARIES'] = "1"
+        os.environ['TOET_TRANSLATIONS_DIR'] = "/somewhere/in/your/disk/translations"
+        os.environ['TOET_SRC_LANG'] = 'en'
+        os.environ['TOET_DEST_LANG'] = 'ko'
+        my_render_function()
+```
+
+Take in consideration that vocabularies files are just simple json files (see below) you are
+free to edit it to improve translation.
+
+```json
+{
+    "origin": {
+        "_t_from": "From",
+        "_t_to": "To",
+        "_t_parts": "Parts",
+        "_t_locations": "Locations",
+        "_t_available_languages": "Available Languages"
+    },
+    "text": {
+        "_t_from": "A partire dal",
+        "_t_to": "A",
+        "_t_parts": "Parti",
+        "_t_locations": "sedi",
+        "_t_available_languages": "Lingue disponibili"
+    }
+}
+```
 
 ## Template
 
