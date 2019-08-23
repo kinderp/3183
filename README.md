@@ -284,8 +284,13 @@ will be called. See below how to invoke `_()`in a custom model class named Summa
 super(SummaryModel, self)._('SummaryModel', SummaryModel.__t)
 ```
 
+After calling `_()` you can get your translations in two ways in your code:
+
+1. Using `self._t` : it's an instance attribute containing the same keys of `__t` (class attribute) with the translations as values.
+2. Each keys in `__t` as instance attributes (e.g. `self._t_from`, `self._t_to`, `self._t_parts` and so on )
 `_()` is defined in base `Model` class (infact it is called using `super`)
-Below its implementation:
+
+Below `_()` implementation:
 
 ```python
     def _(self, child, __t):
