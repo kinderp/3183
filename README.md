@@ -331,7 +331,7 @@ from toet.utils import Translator
 TRANSLATION_DIR = '/somewhere/in/your/disk/translations'
 
 INDEX = {
-   '/absolete/path/of/a/module/module_name': ['CustomModelClas1', 'CustomModelClass2',
+   '/absolete/path/of/a/module/module_name': ['CustomModelClass1', 'CustomModelClass2',
                                               'CustomModelClass3']
 }
 
@@ -340,7 +340,7 @@ Translator.bulk_generate_vocabularies(TRANSLATION_DIR, INDEX, src_dest=list_lang
 ```
 
 All is in `bulk_generate_vocabularies`, it will get and translate `__t` in every class 
-defined in `INDEX` (`CustomModelClas1`, `CustomModelClas2`, `CustomModelClas3`) if `__t`
+defined in `INDEX` (`CustomModelClass1`, `CustomModelClass2`, `CustomModelClass3`) if `__t`
 is not defined in these classes nothing will happen, so take attention. Keys in `INDEX` are
 absolute paths  (without .py at the end) of modules containing those classes.
 `TRANSLATION_DIR` is absolute path of the dir where toet will save your vocabularies.
