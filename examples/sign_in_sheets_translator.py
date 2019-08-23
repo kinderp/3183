@@ -16,7 +16,7 @@ from toet.settings import DOC_WIDTH, DOC_HEIGHT
 from toet.settings import DOC_TOP_MARGIN, DOC_BOTTOM_MARGIN
 from toet.settings import DOC_RIGHT_MARGIN, DOC_LEFT_MARGIN
 from toet.settings import DOC_WIDTH_REAL, DOC_HEIGHT_REAL
-
+from toet.utils import Translator
 
 class HeaderModel(Model):
 
@@ -466,7 +466,40 @@ class SingInSheets:
         def get(self):
             return self.workflow
 
-def make(doc_name):
+def make(doc_name, src, dest):
+
+    # Below an example of a real time translation in rendering phase.
+    # There are two functions for realtime translations:
+    # (1) translate_from_web(), (2) bulk_translate_from_web().
+    #
+    # The latter one is always preferable for obvious
+    # performance reasons and to avoid ip banning by google.
+    #
+    # Note obj=True, it is a useful trick:
+    # if obj is set to False (default) a translate call
+    # returns a dict with the same keys of the original dict
+    # but with values translated in dest lang.
+    # (e.g.)
+    # BEFORE TRANSLATION:
+    #                   dynamic__t = { '_t_affiliation' : 'AFFILIATION' }
+    # AFTER TRANSLATION:
+    #                   dynamic__t = { '_t_affiliation' : 'AFFILIAZOINE' }
+    #
+    # if obj is set to True, it will return an object where
+    # attributes are the keys of the orgin dict.
+    # (e.g.)
+    # BEFORE TRANSLATION:
+    #                   dynamic__t = { '_t_affiliation' : 'AFFILIATION' }
+    # AFTER TRANSLATION:
+    #                   dynamic__t._t_affiliation -> 'AFFILIAZOINE'
+
+    dynamic__t = { '_t_affiliation' : 'AFFILIATION' }
+    dynamic__t = Translator(src=src, dest=dest, disk=False,
+                            write=False,
+                            translation_dir=None).bulk_translate_from_web(dynamic__t,
+                                                                          obj=True)
+    # you can access your translated vars in this way:
+    # dynamic__t._t_affiliation
 
     some_space = Spacer(1,10)
 
@@ -566,7 +599,7 @@ def make(doc_name):
 
     for elem in cell_values:
        instructor_data.append([cell_formatted_text.format(**elem),
-                               'AFFILIATION<br/> <br/ <br/> <br/> <br/> <br/> <br/>', '', ''])
+                               '{}<br/> <br/ <br/> <br/> <br/> <br/><br/>'.format(dynamic__t._t_affiliation), '', ''])
 
     i = InstructorView()
     rendered_fields = i.render(instructor_data)
@@ -602,4 +635,4 @@ if __name__ == '__main__':
         os.environ['TOET_TRANSLATIONS_DIR'] = "/home/antonio/dev/sign_in_sheet/translations"
         os.environ['TOET_SRC_LANG'] = lang[0]
         os.environ['TOET_DEST_LANG'] = lang[1]
-        make("{}_{}_test.pdf".format(*lang))
+        make("{}_{}_test.pdf".format(*lang), *lang)
