@@ -256,10 +256,10 @@ should be used only when you can't do otherwise, for example when you get data
 to be translated during rendering phase and not before (e.g. data in a table 
 body coming from a db or other data sources).
 
-The latter one (batch) is always preferable because of the dalay introduced by
+The latter one (batch) is always preferable because of the delay introduced by
 translation process. So it is better translate your static data (e.g. header in
 a table) before rendering phase, saving your translations in vocabularies files
-and use those one during rendering phase to speed up the whole process.
+and use those ones during rendering phase to speed up the whole process.
 
 Batch mode depends on vocaularies files. Let's see how to create those ones for
 your custom model classes.
@@ -337,6 +337,13 @@ INDEX = {
 list_languages = [('en','it'),('en','fr'),('en','de'),('en','ko'),('en','ja'),]
 Translator.bulk_generate_vocabularies(TRANSLATION_DIR, INDEX, src_dest=list_languages)
 ```
+
+All is in `bulk_generate_vocabularies`, it will get and translate `__t` in every class 
+defined in `INDEX` (`CustomModelClas1`, `CustomModelClas1`, `CustomModelClas1`); key is
+absolute path  (without .py at the end) of module containing those classes.
+`TRANSLATION_DIR` is absolute path of the dir where toet will save your vocabularies.
+So remember to set `TOET_LOAD_VOCABULARIES` to the same value of `TRANSLATION_DIR`to permit
+toet to load correctly your vocabularies.
 
 
 ## Template
