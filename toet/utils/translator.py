@@ -1,5 +1,5 @@
 from googletrans import Translator as GoogleTranslator
-
+from types import SimpleNamespace
 import os
 import sys
 import json
@@ -146,7 +146,7 @@ class Translator:
             return json.load(translation_file)
 
     def bulk_translate_from_web(self, index_words_to_translate, src=None,
-                                dest=None):
+                                dest=None, obj=False):
         """Get translations from Google
 
         It sends only a request for all the keys in __t
@@ -156,23 +156,62 @@ class Translator:
         index_words_to_translate:
 
            {
-                "__t_from" : "From",
-                "__t_to" : "To",
-                "__t_parts" : "Parts",
-                "__t_locations" : "Locations",
-                "__t_available_languages" : "Available Languages",
+                "_t_from" : "From",
+                "_t_to" : "To",
+                "_t_parts" : "Parts",
+                "_t_locations" : "Locations",
+                "_t_available_languages" : "Available Languages",
             }
 
         inverted_index:
 
             {
-                'From': '__t_from',
-                'To': '__t_to',
-                'Parts': '__t_parts',
-                'Locations': '__t_locations',
-                'Available Languages': '__t_available_languages'
+                'From': '_t_from',
+                'To': '_t_to',
+                'Parts': '_t_parts',
+                'Locations': '_t_locations',
+                'Available Languages': '_t_available_languages'
             }
 
+        Args:
+            index_words_to_translate (dict): A dict containing all the string
+                                             to be translated
+            src  (str): source translation lang
+            dest (str): dest translation lang
+            obj (bool): define response format.
+                        if True response is a dict with the same keys of the
+                        origin dict (index_words_to_translate) and values
+                        translated to the dest lang.
+                        if False response is an object with attributes coming
+                        from keys of the origin dict (index_words_to_translate)
+        Retrurns:
+            given in input a index_words_to_translate like below:
+
+                {
+                    "_t_from" : "From",
+                    "_t_to" : "To",
+                    "_t_parts" : "Parts",
+                    "_t_locations" : "Locations",
+                    "_t_available_languages" : "Available Languages",
+                }
+
+            if obj is False it returns a dict like below (e.g. en->it) :
+
+                {
+                    "_t_from" : "Da",
+                    "_t_to" : "A",
+                    "_t_parts" : "Parti",
+                    "_t_locations" : "Luoghi",
+                    "_t_available_languages" : "Lingue Disponibili",
+                }
+
+            if obj is True it returns an obj with these attributes:
+
+                translated._t_from                <- 'Da'
+                translated._t_to                  <- 'A'
+                translated._t_parts               <- 'Parti'
+                translated._t_locations           <- 'Luoghi'
+                translated._t_available_languages <- 'Lingue Disponibili'
         """
         if src is None: src=self.src
         if dest is None: dest=self.dest
@@ -181,9 +220,11 @@ class Translator:
         list_of_words = [index_words_to_translate[key] for key in index_words_to_translate]
         translations = self.gt.translate(list_of_words, src=src, dest=dest)
         translated = {inverted_index[elem.origin]: elem.text for elem in translations}
-        return translated
+        if not obj: return translated
+        else: return SimpleNamespace(**translated)
 
-    def translate_from_web(self, index_words_to_translate, src=None, dest=None):
+    def translate_from_web(self, index_words_to_translate, src=None,
+                           dest=None, obj=False):
         """Get translations from Google
 
         It sends a request for each key in __t (index_words_to_translate)
@@ -196,7 +237,8 @@ class Translator:
         for index in index_words_to_translate:
             print(index_words_to_translate[index])
             translated[index] = self.gt.translate(index_words_to_translate[index], src=src, dest=dest).text
-        return translated
+        if not obj:return translated
+        else: return SimpleNamespace(**translated)
 
     def _write_translations(self, origin_text, translated_text, class_name,
                             src=None, dest=None):
