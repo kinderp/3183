@@ -13,7 +13,7 @@ setup(
     url = "https://github.com/kinderp/3183",
     packages=setuptools.find_packages(),
     install_requires=[
-          'Pillow','reportlab',
+          'Pillow','reportlab','googletrans',
     ],
     include_package_data=True,
     zip_safe=False
