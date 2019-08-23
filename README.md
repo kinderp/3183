@@ -1,4 +1,4 @@
-# 3183
+# 3183 a.k.a. toet
 mvc to pdf in a django style 
 
 ```python
@@ -241,6 +241,103 @@ class SummaryView(FormView):
     s_ = SummaryView(**data_summary)
     rendered_fields = s_.render()
 ```
+
+## Translator
+
+3183 offers you a pratical way to translate your docs.
+Basically translation process is just a request to google translate service.
+You can choose to translate in two different ways:
+
+* realtime
+* batch
+
+In the realtime way, translation is made during rendering phase; this method
+should be used only when you can't do otherwise, for example when you get data
+to be translated during rendering phase and not before (e.g. data in a table 
+body coming from a db or other data sources).
+
+The latter one (batch) is always preferable because of the dalay introduced by
+translation process. So it is better translate your static data (e.g. header in
+a table) before rendering phase, saving your translations in vocabularies files
+and use those one during rendering phase to speed up the whole process.
+
+Batch mode depends on vocaularies files. Let's see how to create those ones for
+your custom model classes.
+Every 3183 custom modol class can define a magic class attribute `__t`. It is just
+a dict like below:
+
+```python
+__t = {
+        "_t_from" : "From",
+        "_t_to" : "To",
+        "_t_parts" : "Parts",
+        "_t_locations" : "Locations",
+        "_t_available_languages" : "Available Languages",
+    }
+```
+
+
+Every keys in `__t` will be automatically translated when `_()` model magic function
+will be called. See below an example for a custom model class named SummaryModel:
+
+```python
+super(SummaryModel, self)._('SummaryModel', SummaryModel.__t)
+```
+
+`_()` is defined in base Model class (infact it is called using `super`)
+Below its implementation:
+
+```python
+    def _(self, child, __t):
+        if __t is not None:
+            CLIENT_TRANSLATIONS_DIR = os.getenv('TOET_TRANSLATIONS_DIR')
+            SRC_LANG = os.getenv('TOET_SRC_LANG', 'en')
+            DEST_LANG = os.getenv('TOET_DEST_LANG', 'it')
+            LOAD_FROM_DISK = bool(int(os.getenv('TOET_LOAD_VOCABULARIES')))
+            if LOAD_FROM_DISK:
+                translated__t = Translator(src=SRC_LANG, dest=DEST_LANG,
+                                           disk=True, write=False,
+                                           translation_dir=CLIENT_TRANSLATIONS_DIR).translate(child)
+                #_translate_from_disk(child)
+            else:
+                translated__t = Translator(src=SRC_LANG, dest=DEST_LANG,
+                                           disk=False,
+                                           write=False).translate(__t)
+                #bulk_translate_from_web(__t)
+            self.__dict__.update(translated__t)
+            self.__dict__.update({'_t': translated__t})
+```
+
+As you can see `_()` use four env vars:
+
+* TOET_TRANSLATIONS_DIR
+* TOET_SRC_LANG
+* TOET_DEST_LANG
+* TOET_LOAD_VOCABULARIES
+
+Name         | Description   | Values 
+------------ | ------------- | -------------
+TOET_TRANSLATIONS_DIR  | absolute path of dir containing translations vocabularies files | `str` (e.g. `/somewhere/in/your/disk`) 
+TOET_SRC_LANG          | source translation lang      | `str` (e.g. `en`)
+TOET_DEST_LANG         | destination translation lang | `str` (e.g. `it`)
+TOET_LOAD_VOCABULARIES | load translations from disk  | `int` (e.g. `1` or `0`)
+
+See [here](https://github.com/kinderp/3183/blob/master/examples/vocabularies_generator.py) or below for a full code example of a vocabularies generator
+
+```python
+from toet.utils import Translator
+
+TRANSLATION_DIR = '/somewhere/in/your/disk/translations'
+
+INDEX = {
+   '/absolete/path/of/a/module/module_name': ['CustomModelClas1', 'CustomModelClass2',
+                                              'CustomModelClass3']
+}
+
+list_languages = [('en','it'),('en','fr'),('en','de'),('en','ko'),('en','ja'),]
+Translator.bulk_generate_vocabularies(TRANSLATION_DIR, INDEX, src_dest=list_languages)
+```
+
 
 ## Template
 
