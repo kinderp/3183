@@ -288,6 +288,7 @@ After calling `_()` you can get your translations in two ways in your code:
 
 1. Using `self._t` : it's an instance attribute containing the same keys of `__t` (class attribute) with the translations as values.
 2. Each keys in `__t` as instance attributes (e.g. `self._t_from`, `self._t_to`, `self._t_parts` and so on )
+
 `_()` is defined in base `Model` class (infact it is called using `super`)
 
 Below `_()` implementation:
