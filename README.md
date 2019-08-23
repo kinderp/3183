@@ -17,6 +17,10 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> print(project_name)
 [3, 18, 3] 
 ```
+## Installation
+
+`pip install git+https://github.com/kinderp/3183#egg=3183
+`
 
 ## Description
 
