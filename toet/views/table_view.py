@@ -9,17 +9,13 @@ from .view import View
 
 from reportlab.lib.pagesizes import A4
 
-from ..settings import PAGASIZE
-from ..settings import DOC_WIDTH, DOC_HEIGHT
-from ..settings import DOC_TOP_MARGIN, DOC_BOTTOM_MARGIN
-from ..settings import DOC_RIGHT_MARGIN, DOC_LEFT_MARGIN
-from ..settings import DOC_WIDTH_REAL, DOC_HEIGHT_REAL
+from ..settings import Setting
 
 
 class TableView(View):
 
     def __init__(self, child):
-
+        self.DOC_WIDTH_REAL = Setting.DOC_WIDTH_REAL
         self.child = child
         self.model = child.model
         self.fields = child.fields
@@ -51,8 +47,6 @@ class TableView(View):
         super(TableView, self).__init__(self.child)
  
     def set_style(self, _commands, header=True, body=True):
-            import pdb
-            pdb.set_trace()
             if _commands:
                 if header and body:
                     self.LIST_STYLE_HEADER = TableStyle(_commands)
@@ -64,7 +58,7 @@ class TableView(View):
  
     def _get_col_widths(self,  data):
         n_cols = len(data)
-        return [DOC_WIDTH_REAL/n_cols]*n_cols
+        return [self.DOC_WIDTH_REAL/n_cols]*n_cols
 
     def _view_rule(self):
         # TODO: Put here all the logic for rendering rules
