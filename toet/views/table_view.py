@@ -49,7 +49,19 @@ class TableView(View):
             )
 
         super(TableView, self).__init__(self.child)
-
+ 
+    def set_style(self, _commands, header=True, body=True):
+            import pdb
+            pdb.set_trace()
+            if _commands:
+                if header and body:
+                    self.LIST_STYLE_HEADER = TableStyle(_commands)
+                    self.LIST_STYLE = TableStyle(_commands)
+                elif header and not body:
+                    self.LIST_STYLE_HEADER = TableStyle(_commands)
+                elif not header and body:
+                    self.LIST_STYLE = TableStyle(_commands)
+ 
     def _get_col_widths(self,  data):
         n_cols = len(data)
         return [DOC_WIDTH_REAL/n_cols]*n_cols
