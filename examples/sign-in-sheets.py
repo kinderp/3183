@@ -11,12 +11,17 @@ from reportlab.platypus import SimpleDocTemplate, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 styles = getSampleStyleSheet()
 
-from toet.settings import PAGASIZE
-from toet.settings import DOC_WIDTH, DOC_HEIGHT
-from toet.settings import DOC_TOP_MARGIN, DOC_BOTTOM_MARGIN
-from toet.settings import DOC_RIGHT_MARGIN, DOC_LEFT_MARGIN
-from toet.settings import DOC_WIDTH_REAL, DOC_HEIGHT_REAL
+from toet.settings import Setting
 
+PAGASIZE = Setting.PAGASIZE
+DOC_WIDTH = Setting.DOC_WIDTH
+DOC_HEIGHT = Setting.DOC_HEIGHT
+DOC_TOP_MARGIN = Setting.DOC_TOP_MARGIN
+DOC_BOTTOM_MARGIN = Setting.DOC_BOTTOM_MARGIN
+DOC_RIGHT_MARGIN = Setting.DOC_RIGHT_MARGIN
+DOC_LEFT_MARGIN = Setting.DOC_LEFT_MARGIN
+DOC_WIDTH_REAL = Setting.DOC_WIDTH_REAL
+DOC_HEIGHT_REAL = Setting.DOC_HEIGHT_REAL
 
 
 class HeaderModel(Model):
