@@ -26,6 +26,7 @@ class Template:
                         'right': 'Right in the footer',
                         'middle': 'Middle in the footer'
                         },
+            "filename": "",
         }
     """
 
@@ -40,7 +41,12 @@ class Template:
         else:
             self.footer = None
 
-        self.doc = SimpleDocTemplate('test.pdf', pagasize=Setting.PAGASIZE,
+        if 'filename' in kwargs:
+            self.filename = kwargs['filename']
+        else:
+            self.filename = "test.pdf"
+
+        self.doc = SimpleDocTemplate(self.filename, pagasize=Setting.PAGASIZE,
                                      leftMargin=Setting.DOC_LEFT_MARGIN,
                                      rightMargin=Setting.DOC_RIGHT_MARGIN,
                                      bottomMargin=Setting.DOC_BOTTOM_MARGIN,
