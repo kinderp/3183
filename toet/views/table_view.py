@@ -89,23 +89,29 @@ class TableView(View):
 
     def _get_body_fields(self):
         if self.body_header:
-            return self.body_header
+            #return self.body_header
+            last_header_row = self.body_header
+        else:
+            last_header_row = self.fields[-1]
 
-        last_header_row = self.fields[-1]
         if isinstance(last_header_row[0],list):
             # last row is an innertable
             # last_header_row is a matrix
             # return last row of that matrix
-            return last_header_row[0][-1]
+            return last_header_row[0][-1], True
         else:
             # normal case
-            return last_header_row
+            return last_header_row, False
 
     def render_body(self, header, data):
         # - append body table in header
         body_rendered_objects = []
         #body_fields = self.fields[-1]
-        body_fields = self._get_body_fields()
+        body_fields, is_inner_table = self._get_body_fields()
+        if is_inner_table:
+            body_inner_table = self._render_body_inner_table(data, body_fields)
+            header.append(body_inner_table)
+            return header
         for row in data:
             new_rendered_row = []
             for i, field in enumerate(body_fields):
@@ -206,6 +212,92 @@ class TableView(View):
             objects = [Table(objects, style=self.LIST_STYLE_HEADER, colWidths=col_widths)] 
             #objects = [Table(objects, style=self.LIST_STYLE_HEADER)] 
         return objects
+
+    def _render_body_inner_table(self, data, body_fields):
+
+        body_rendered_objects = []
+        # style_command appends SPAN commands to style header
+        # SPAN commands are needed to create our inner table
+
+        style_command = copy.deepcopy(self.LIST_STYLE)
+        #style_command = TableStyle([
+        #    ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
+        #])
+
+        fields = set(body_fields)
+
+        indices = {x: [] for x in fields}
+        # indices is a dict and it contains table coords (col, row) for earch fields
+        # e.g. if data is like below:
+        #
+        # data = [
+        #         ['uno', 'uno', 'due', 'due', 'due', 'tre'],
+        #        ]
+        #
+        # indices will have this values
+        #
+        # {'tre':     [5], 
+        #  'uno':     [0, 1], 
+        #  'due':     [2. 3. 4], 
+        # }
+        #
+        # for each elem in data indices will contain (col,row) coords
+
+        for elem in fields:
+            for i, field in enumerate(body_fields):
+                if field == elem:
+                    indices[elem].append(i)
+        # after calculating indices, we use those ones for (sc, sr), (ec, er)
+        # coords in SPAN commands
+        # 
+        # SPAN, (sc,sr), (ec,er)
+        # indicates that the cells in columns sc - ec and rows sr - er should 
+        # be combined into a super cell with contents determined by the cell 
+        # (sc, sr). 
+        #
+        # The other cells should be present, but should contain empty strings 
+        # or you may get unexpected results.
+
+        for field in indices:
+            if len(indices[field]) < 2:
+                continue
+            for r, row in enumerate(data):
+                tmp_span_command =  ('SPAN', ( min(indices[field]), r ), (max(indices[field]), r ) )
+                style_command.add(*tmp_span_command)
+
+
+        # recreate data (compliant_data) with '' in the other cells (to avoid
+        # unexpected results)
+
+        n_cols = len(body_fields)
+        n_rows = len(data)
+        compliant_data = [['']*n_cols]*n_rows
+
+        for r, row in enumerate(data):
+            for i, field in enumerate(fields):
+                min_col_index = min(indices[field])
+                compliant_data[r][min_col_index] = row[i]
+
+        # and finally rendering fields
+        for row in compliant_data:
+            new_rendered_row = []
+            for i, field in enumerate(body_fields):
+                current_record = row[i]
+                if current_record == '':
+                    new_rendered_row.append(current_record)
+                else:
+                    class_name = getattr(self.model, field).__class__.__name__
+                    if isinstance(current_record, dict):
+                        new_body_obj = FieldFactory.create(class_name, current_record)
+                        new_rendered_row.append(new_body_obj.render())
+                    else:
+                        new_body_obj = FieldFactory.create(class_name, (current_record,))
+                        new_rendered_row.append(new_body_obj.render())
+            body_rendered_objects.append(new_rendered_row)
+
+        col_widths = self._get_col_widths(body_fields)
+        return Table(body_rendered_objects, colWidths=col_widths, style=style_command)
+
 
     def _render_inner_table(self, data):
 
