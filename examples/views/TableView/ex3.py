@@ -114,7 +114,7 @@ class ExampleViewFirstRowDataBody(TableView):
 from reportlab.platypus import SimpleDocTemplate, Spacer
 
 if __name__ == '__main__':
-    pdf = Template()
+    pdf = Template(filename='ex3.pdf')
     data_model = {
         "_one" : "1",
         "_two" : "2",

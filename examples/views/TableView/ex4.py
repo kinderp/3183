@@ -165,7 +165,7 @@ class ExampleViewBodyInnerTable(TableView):
 from reportlab.platypus import SimpleDocTemplate, Spacer
 
 if __name__ == '__main__':
-    pdf = Template()
+    pdf = Template(filename='ex4.pdf')
     data_model = {
         "_one" : "1",
         "_two" : "2",
@@ -183,15 +183,27 @@ if __name__ == '__main__':
     # of columns in the body.  You can overwrite  this 
     # behaviour using self.body_header as seen in prev-
     # -ious example.
+    # In this case the last row is not an inner table
     table = ExampleView(**data_model)
     rendered_table = table.render(data_body)
     pdf.story.add(rendered_table)
 
+    some_space = Spacer(1,10)
+    pdf.story.add(some_space)
     data_body_inner_table = [
         ['my header is last row of an inner table', 'my header is last row of an inner table'],
         ['my header is last row of an inner table', 'my header is last row of an inner table'],
         ['my header is last row of an inner table', 'my header is last row of an inner table'],
     ]
+    # A table with an inner table in the header  and a 
+    # body.
+    # Here the last row in the header is an inner table
+    # the last row of the inner table will define  the
+    # number of cols in the body.
+    # You cannot overwrite this beahaviour using body_header
+    # always the last row of on inner table defins n_cols
+    # of the body.
     table_body_inner_table = ExampleViewBodyInnerTable(**data_model)
-    table_body_inner_table.render(data_body_inner_table)
+    rendered_fields = table_body_inner_table.render(data_body_inner_table)
+    pdf.story.add(rendered_fields)
     pdf.build()

@@ -75,7 +75,7 @@ if __name__ == '__main__':
     }
 
     header = HeaderView(**header_data)
-    pdf = Template(header=header, footer=footer)
+    pdf = Template(header=header, footer=footer, filename='ex1.pdf')
     some_space = Spacer(1,10)
 
     a_new_page = PageBreak()

@@ -70,7 +70,7 @@ class ExampleView(TableView):
 from reportlab.platypus import SimpleDocTemplate, Spacer
 
 if __name__ == '__main__':
-    pdf = Template()
+    pdf = Template(filename='ex1.pdf')
     data_model = {
         "_one" : "Left aligned",
         "_two" : "Centered and bold",
