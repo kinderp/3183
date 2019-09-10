@@ -9,7 +9,18 @@ from toet.fields import TextField, ImageField
 
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
-from reportlab.platypus import SimpleDocTemplate, Spacer, PageBreak
+from reportlab.platypus import Spacer, PageBreak
+
+# We want a header in our pdf!
+# To do that we need to declare a class that inherits from 
+# 'TableViewHeaderOrFooter'. That one is quite similar to
+# a TableView.
+#
+# In this example we'll add an header with 3 columns
+# +---------+-------+----------+
+# | session | title | an image |
+# +---------+-------+----------+
+# Let's see how to to that.
 
 class HeaderModel(Model):
     def __init__(self,**kwargs):
@@ -20,7 +31,7 @@ class HeaderModel(Model):
         super(HeaderModel, self).__init__(**kwargs)
         self.session = TextField(text="{}".format(self._session))
         self.title = TextField(text="{}".format(self._title))
-        self.logo = ImageField('{}/examples/TableView/images/Octocat.png'.format(project_dir), width=50, height=50)
+        self.logo = ImageField('{}/examples/views/TableViewHeaderOrFooter/images/Octocat.png'.format(project_dir), width=50, height=50)
 
 
 class HeaderView(TableViewHeaderOrFooter):
