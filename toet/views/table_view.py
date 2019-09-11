@@ -224,7 +224,12 @@ class TableView(View):
         #    ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
         #])
 
-        fields = set(body_fields)
+        # we must maintain in fields the original order
+        # of all the elems in body_fields.
+        fields = []
+        for f in body_fields:
+            if f not in fields:
+                fields.append(f)
 
         indices = {x: [] for x in fields}
         # indices is a dict and it contains table coords (col, row) for earch fields
@@ -277,7 +282,6 @@ class TableView(View):
             for i, field in enumerate(fields):
                 min_col_index = min(indices[field])
                 compliant_data[r][min_col_index] = row[i]
-
         # and finally rendering fields
         for row in compliant_data:
             new_rendered_row = []
