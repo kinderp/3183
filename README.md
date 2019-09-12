@@ -142,26 +142,30 @@ Maybe you noticed 3 class attributes there:
 * `fields`: fields of your model you want to show in the view
 * `span`: use span in rows if possible
 
-All these ones are required but another one does exist: `body_header`
-Read next section for a deep intro about View attributes
+All these ones are required but other ones do exist.
+Please, read next section to know more about View attributes
 
 ### TableView
 
+TableView is a table with steroids.
+It has an header (with multiple rows) and a body.
+Header's rows can have different num. of columns permetting you
+a greater flexibility in rendering your docs.
+A row in the the header can have a table inside it (inner table)
+it could be useful in some very complicated layouts.
 
-Field        | Required | Description
------------- | ---------|-------------|
-`model`      | `True`   | ``
-`fields`     | `True`   |
-`span`       | `True`   |
-`body_header`| `False`  |
+TableView has a series of attributes you can activate when needed.
+Let's see:
 
-#### View.model
+Field           | Required | Description
+----------------| ---------|-------------|
+`model`         | `True`   | view's model
+`fields`        | `True`   | model's fields to show
+`span`          | `True`   | activate steroids
+`body_header`   | `False`  | which row in the table's header will be the body's header
+`style_header`  | `False`  | style stuff (fontsize, fontname ecc)
+`cell_alignment`| `False`  | align and valig
 
-#### View.fields
-
-#### View.span
-
-#### View.body_header
 
 ### FormView
 
