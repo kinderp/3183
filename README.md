@@ -6,7 +6,7 @@ mvc to pdf in a django style
 Type "help", "copyright", "credits" or "license" for more information.
 >>> from operator import sub
 >>> 
->>> mvc = ['m','v','c']
+>>> mvc = ['m', 'v', 'c']
 >>> pdf = ['p', 'd', 'f']
 >>> 
 >>> a = list(map(ord, mvc))
@@ -20,6 +20,12 @@ Type "help", "copyright", "credits" or "license" for more information.
 ## Installation
 
 `pip install git+https://github.com/kinderp/3183#egg=3183
+
+dev branch is now quite stable and it will
+be merged in master soon. In the meanwhile you can install toet from
+dev branch in this way:
+
+`pip install git+https://github.com/kinderp/3183@dev#egg=3183`
 `
 
 ## Description
@@ -388,29 +394,48 @@ free to edit it to improve translation.
 
 ## Template
 
-As you can see below to create a pdf i just have to instantiate
-a template, my previous view (see above) and finally build the doc.
+Template represents you entire document and you need
+to create it in order to create your pdf.
+You will add your view to the `story` and when ready you
+will `build` your pdf.
+
+Moreover it gives you an easy way to add in your pdf
+an header and a footer.
+
+Header must be an `TableViewHeaderOrFooter` and footer
+is just a dict with 3 fields.
+If you set one of those 3 fields as an empty string
+page numbers in that position will be automatically
+added.
 
 ```python
 if __name__ == '__main__':
-    doc = SimpleDocTemplate('test.pdf', pagasize=A4)
-    story = Story()
 
+    header_data = {
+        "_title": "<b>Github Report</b>",
+        "_session": datetime.now().strftime("%m/%d/%Y - %H:%M:%S")
+    }
+
+    footer = {
+                'left': '',
+                'right': 'Right in the footer',
+                'middle': 'Middle in the footer'
+    }
+
+    header = HeaderView(**header_data)
+    pdf = Template(header=header, footer=footer, filename='ex1.pdf')
     some_space = Spacer(1,10)
 
-    h = HeaderView()
+    a_new_page = PageBreak()
 
-    rendered_fields = h.render()
-    story.add(rendered_fields) 
+    pdf.story.add(some_space)
+    pdf.story.add(a_new_page)
+    pdf.story.add(a_new_page)
 
-    doc.build(story.get())
+    pdf.build()
 
 ```
 
-Below an image of the result.
-As you can see you have a row with the 3 fields `session`, `title`, `logo` that you have defined in your model
-
-![header](https://github.com/kinderp/3183/blob/master/header.png)
 
 ## Usage
 
