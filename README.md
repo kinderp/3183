@@ -463,11 +463,11 @@ if __name__ == '__main__':
 
 ## Usage
 
-Below a list of complex layout
+Below a list of complex layouts
 
 Link            | Description
 ----------------| -------------|
-[sign-in-sheets](https://github.com/kinderp/3183/blob/dev/examples/complex/sign-in-sheets.py) |
-[sign-in-sheets-translator](https://github.com/kinderp/3183/blob/dev/examples/complex/sign-in-sheets-translator.py) |
-[jda](https://github.com/kinderp/3183/blob/dev/examples/complex/jda.py) |
-[sanofi](https://github.com/kinderp/3183/blob/dev/examples/complex/sanofi.py) |
+[sign-in-sheets](https://github.com/kinderp/3183/blob/dev/examples/complex/sign-in-sheets.py) | very complex layout
+[sign-in-sheets-translator](https://github.com/kinderp/3183/blob/dev/examples/complex/sign-in-sheets-translator.py) | same above but with translations
+[jda](https://github.com/kinderp/3183/blob/dev/examples/complex/jda.py) | a little bit easier
+[sanofi](https://github.com/kinderp/3183/blob/dev/examples/complex/sanofi.py) | middle in complexity
