@@ -22,7 +22,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 `pip install git+https://github.com/kinderp/3183#egg=3183`
 
 dev branch is now quite stable and it will
-be merged in master soon. In the meanwhile you can install toet from
+be merged into master soon. In the meanwhile you can install toet from
 dev branch in this way:
 
 `pip install git+https://github.com/kinderp/3183@dev#egg=3183`
@@ -166,6 +166,22 @@ Field           | Required | Description
 `style_header`  | `False`  | style stuff (fontsize, fontname ecc)
 `cell_alignment`| `False`  | align and valig
 
+Here a list of examples to learn how to use a TableView
+
+Link            | Description
+----------------| -------------|
+[ex1](https://github.com/kinderp/3183/blob/dev/examples/views/TableView/ex1.py) | create an header with only a row and modify doc's margin
+[ex2](https://github.com/kinderp/3183/blob/dev/examples/views/TableView/ex2.py) | create an header with multiple rows and a body `self.span = False`
+[ex3](https://github.com/kinderp/3183/blob/dev/examples/views/TableView/ex3.py) | create an header with multiple rows with a different num. of columns `self.span = True`
+[ex4](https://github.com/kinderp/3183/blob/dev/examples/views/TableView/ex4.py) | More complicated stuff, `inner table`
+[ex5](https://github.com/kinderp/3183/blob/dev/examples/views/TableView/ex5.py) | How to use `self.body_header`
+[ex6](https://github.com/kinderp/3183/blob/dev/examples/views/TableView/ex6.py) | More about `self.body_header`
+[ex7](https://github.com/kinderp/3183/blob/dev/examples/views/TableView/ex7.py) | Cells' alignment
+[ex8](https://github.com/kinderp/3183/blob/dev/examples/views/TableView/ex8.py) | More about cells' alignment
+
+### TableViewHeaderOrFooter
+
+A specific view for docs' header.
 
 ### FormView
 
