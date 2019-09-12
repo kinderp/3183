@@ -19,7 +19,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 ```
 ## Installation
 
-`pip install git+https://github.com/kinderp/3183#egg=3183
+`pip install git+https://github.com/kinderp/3183#egg=3183`
 
 dev branch is now quite stable and it will
 be merged in master soon. In the meanwhile you can install toet from
