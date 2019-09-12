@@ -358,16 +358,18 @@ class TableView(View):
 
         n_cols = len(body_fields)
         n_rows = len(data)
-        #compliant_data = [['']*n_cols]*n_rows
         compliant_data = []
 
-        for r, row in enumerate(data):
+        for row in range(0, n_rows):
             new_row = []
-            for i, field in enumerate(fields):
-                min_col_index = min(indices[field])
-                #new_row.append(data[r][min_col_index])
-                new_row.append(row[i])
+            for col in range(0, n_cols):
+                new_row.append('')
             compliant_data.append(new_row)
+
+        for r, row in enumerate(data):
+             for i, field in enumerate(fields):
+                 min_col_index = min(indices[field])
+                 compliant_data[r][min_col_index] = row[i]
 
         # and finally rendering fields
         for row in compliant_data:
