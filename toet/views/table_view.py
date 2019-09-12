@@ -15,6 +15,7 @@ from ..settings import Setting
 class TableView(View):
 
     def __init__(self, child):
+        self.num_rows = 0
         self.DOC_WIDTH_REAL = Setting.DOC_WIDTH_REAL
         self.child = child
         self.model = child.model
@@ -24,6 +25,7 @@ class TableView(View):
         # atm style is only for header fields styiling (Textfield in a cell)
         # IS NOT table style (border backgroudn and so on)!
         self.style_header = child.style_header if hasattr(child, 'style_header') else []
+        self.cell_alignment = child.cell_alignment if hasattr(child, 'cell_alignment') else {}
         # style is static yet
         # TO DO: load style dynamically somewhere
         self.LIST_STYLE_HEADER = TableStyle(
@@ -43,7 +45,7 @@ class TableView(View):
             ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
             ]
             )
-
+        self._set_cell_alignment()
         super(TableView, self).__init__(self.child)
  
     def set_style(self, _commands, header=True, body=True):
@@ -55,7 +57,82 @@ class TableView(View):
                     self.LIST_STYLE_HEADER = TableStyle(_commands)
                 elif not header and body:
                     self.LIST_STYLE = TableStyle(_commands)
- 
+
+    def _set_cell_alignment(self):
+        alignment_commands = []
+        if self.span == False:
+            for n_row in self.cell_alignment:
+                is_body = False if n_row != '*' else True
+                cell_alignment = self.cell_alignment[n_row]
+                cols_indexes = list(cell_alignment.keys())
+                cols_indexes.sort(reverse=True)
+                for col_index in cols_indexes:
+                    commands = cell_alignment[col_index]
+                    for command in commands:
+                        if command[0] == 'VALIGN':
+                            # ('VALIGN', (sc,sr), (ec,er), 'CENTER')
+                            if is_body:
+                                c = ('VALIGN', (int(col_index), 0), (int(col_index), -1), command[1])
+                                self.LIST_STYLE.add(*c)
+                            else:
+                                c = ('VALIGN', (int(col_index), int(n_row)), (int(col_index),int(n_row)), command[1])
+                                self.LIST_STYLE_HEADER.add(*c)
+                        elif command[0] == 'ALIGN':
+                            if is_body:
+                                c = ('ALIGN', (int(col_index), 0), (int(col_index), -1), command[1])
+                                self.LIST_STYLE.add(*c)
+                            else:
+                                c = ('ALIGN', (int(col_index), int(n_row)), (int(col_index), int(n_row)), command[1])
+                                self.LIST_STYLE_HEADER.add(*c)
+                        else:
+                            raise ValueError("Not a valid command in cell_alignment")
+        else:
+            # is span = True:
+            # set only body's cells alignment
+            # header's cells alignment will be set in
+            # _set_dynamic_cell_alignment()
+            if "*" in self.cell_alignment:
+                body_cell_alignment = self.cell_alignment["*"]
+                cols_indexes = list(body_cell_alignment.keys())
+                cols_indexes.sort(reverse=True)
+                for col_index in cols_indexes:
+                    import pdb
+                    pdb.set_trace()
+                    commands = body_cell_alignment[col_index]
+                    for command in commands:
+                        if command[0] == 'VALIGN':
+                            # ('VALIGN', (sc,sr), (ec,er), 'CENTER')
+                            c = ('VALIGN', (int(col_index), 0), (int(col_index), -1), command[1])
+                            self.LIST_STYLE.add(*c)
+                        elif command[0] == 'ALIGN':
+                            c = ('ALIGN', (int(col_index), 0), (int(col_index), -1), command[1])
+                            self.LIST_STYLE.add(*c)
+                        else:
+                            raise ValueError("Not a valid command in cell_alignment")
+
+    def _set_dynamic_cell_alignment(self):
+        if str(self.num_rows) in self.cell_alignment:
+            style_command = copy.deepcopy(self.LIST_STYLE_HEADER)
+            cell_alignment = self.cell_alignment[str(self.num_rows)]
+            cols_indexes = list(cell_alignment.keys())
+            cols_indexes.sort(reverse=True)
+            for col_index in cols_indexes:
+                commands = cell_alignment[col_index]
+                for command in commands:
+                    if command[0] == 'VALIGN':
+                        # ('VALIGN', (sc,sr), (ec,er), 'CENTER')
+                            c = ('VALIGN', (int(col_index), 0), (int(col_index),0), command[1])
+                            style_command.add(*c)
+                    elif command[0] == 'ALIGN':
+                            c = ('ALIGN', (int(col_index), 0), (int(col_index), 0), command[1])
+                            style_command.add(*c)
+                    else:
+                        raise ValueError("Not a valid command in cell_alignment")
+            return style_command
+        else:
+            return self.LIST_STYLE_HEADER
+
+
     def _get_col_widths(self,  data):
         n_cols = len(data)
         return [self.DOC_WIDTH_REAL/n_cols]*n_cols
@@ -195,9 +272,12 @@ class TableView(View):
                 # objects contais all the rendered elems of the row
                 #t = Table([new_row], style=self.LIST_STYLE_HEADER)
                 col_widths = self._get_col_widths(new_row)
-                t = Table([new_row], style=self.LIST_STYLE_HEADER,
+                style_command = self._set_dynamic_cell_alignment()
+                t = Table([new_row], style=style_command,
                           colWidths=col_widths)
                 objects.append(t)
+                # a new row has been created
+                self.num_rows = self.num_rows + 1
             elif self.span and inner:
                 # nothing to do here, inner talbe has been added above
                 # into objects.
@@ -206,6 +286,8 @@ class TableView(View):
                 pass
             else:
                 objects.append(new_row)
+                # a new row has been created
+                self.num_rows = self.num_rows + 1
 
         if not self.span:
             col_widths = self._get_col_widths(objects[0])
@@ -387,6 +469,9 @@ class TableView(View):
         # and finally rendering fields
         col_widths = self._get_col_widths(compliant_data[0])
         #return Table(compliant_data, style=style_command)
+        # an inner table is considered as a unique row
+        # so a new row has been created.
+        self.num_rows = self.num_rows + 1 
         return Table(compliant_data, colWidths=col_widths, style=style_command)
 
 
