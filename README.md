@@ -164,15 +164,15 @@ Field           | Required | Description
 `span`          | `True`   | activate steroids
 `body_header`   | `False`  | which row in the table's header will be the body's header
 `style_header`  | `False`  | style stuff (fontsize, fontname ecc)
-`cell_alignment`| `False`  | align and valig
+`cell_alignment`| `False`  | align and valign
 
 Here a list of examples to learn how to use a TableView
 
 Link            | Description
 ----------------| -------------|
-[ex1](https://github.com/kinderp/3183/blob/dev/examples/views/TableView/ex1.py) | create an header with only a row and modify doc's margin
-[ex2](https://github.com/kinderp/3183/blob/dev/examples/views/TableView/ex2.py) | create an header with multiple rows and a body `self.span = False`
-[ex3](https://github.com/kinderp/3183/blob/dev/examples/views/TableView/ex3.py) | create an header with multiple rows with a different num. of columns `self.span = True`
+[ex1](https://github.com/kinderp/3183/blob/dev/examples/views/TableView/ex1.py) | Create an header with only a row and modify doc's margin
+[ex2](https://github.com/kinderp/3183/blob/dev/examples/views/TableView/ex2.py) | Create an header with multiple rows and a body `self.span = False`
+[ex3](https://github.com/kinderp/3183/blob/dev/examples/views/TableView/ex3.py) | Create an header with multiple rows with a different num. of columns `self.span = True`
 [ex4](https://github.com/kinderp/3183/blob/dev/examples/views/TableView/ex4.py) | More complicated stuff, `inner table`
 [ex5](https://github.com/kinderp/3183/blob/dev/examples/views/TableView/ex5.py) | How to use `self.body_header`
 [ex6](https://github.com/kinderp/3183/blob/dev/examples/views/TableView/ex6.py) | More about `self.body_header`
@@ -182,6 +182,10 @@ Link            | Description
 ### TableViewHeaderOrFooter
 
 A specific view for docs' header.
+
+Link            | Description
+----------------| -------------|
+[ex1](https://github.com/kinderp/3183/blob/dev/examples/views/TableViewHeaderOrFooter/ex1.py) | Hot to create an header and a footer
 
 ### FormView
 
