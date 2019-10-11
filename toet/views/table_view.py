@@ -44,6 +44,8 @@ class TableView(View):
             ]
             )
 
+        self.body_col_widths = None
+
         super(TableView, self).__init__(self.child)
  
     def set_style(self, _commands, header=True, body=True):
@@ -56,10 +58,16 @@ class TableView(View):
                 elif not header and body:
                     self.LIST_STYLE = TableStyle(_commands)
  
+    def set_body_col_widths(self, col_widths):
+        self.body_col_widths = col_widths
+
     def _get_col_widths(self,  data):
+        if not self.span and self.body_col_widths:
+            return self.body_col_widths
+
         n_cols = len(data)
         return [self.DOC_WIDTH_REAL/n_cols]*n_cols
-
+ 
     def _view_rule(self):
         # TODO: Put here all the logic for rendering rules
         # 1. if an inner table is present in a row
